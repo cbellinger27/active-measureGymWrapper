@@ -64,6 +64,7 @@ The provided gym wrapper environment converts standard OpenAI Gym environments i
         _ = env.render("human")
         if done:
           obs = env.reset()
-
+    env.close()
+    
     df = pd.DataFrame({'Total steps':[1000], 'Total Measurements': [num_measure], 'Total No Measurement': [num_noMeasure]})
     df.plot.bar(title='CartPole Policy Rollout')
