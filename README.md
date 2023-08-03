@@ -1,6 +1,6 @@
 ## Active-measure MDP with explicit cost wrapper for the Open AI Gym.
 
-#To cite the framework and find more details:**
+#To cite the framework and find more details:
 
   @inproceedings{bellinger2022active-measure,
     title={Balancing Information with Observation Costs in Deep Reinforcement Learning},
