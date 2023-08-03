@@ -4,12 +4,12 @@ This repository includes the code associated with the paper 'Balancing Informati
 
 # Citation
 
-  @inproceedings{bellinger2022active-measure,
-  title={Balancing Information with Observation Costs in Deep Reinforcement Learning},
-  author={Bellinger, Colin and Drozdyuk, Andriy and Crowley, Mark and Tamblyn, Isaac},
-  booktitle={Canadian Conference on Artificial Intelligence},
-  year={2022}
-  }
+    @inproceedings{bellinger2022active-measure,
+    title={Balancing Information with Observation Costs in Deep Reinforcement Learning},
+    author={Bellinger, Colin and Drozdyuk, Andriy and Crowley, Mark and Tamblyn, Isaac},
+    booktitle={Canadian Conference on Artificial Intelligence},
+    year={2022}
+    }
 
 # Overview
 
@@ -17,37 +17,53 @@ The provided gym wrapper environment converts standard OpenAI Gym environments i
 
 # Demonstration of the wrapper class applied to the cartpole gym environment:
 
-  import gym
-  from wrapper import make_env
-  import numpy as np
-  
-  obs_cost = 0.1
-  obs_flag = 1
-  vanilla = 0
-  
-  env = make_env("CartPole-v1", obs_cost, obs_flag, vanilla)
-  
-  observation = env.reset()
-  for _ in range(1000):    
-    env.render()
-    action = env.action_space.sample() # your agent here (this takes random actions)
-    observation, reward, done, info = env.step(action)
-    if done:
-      observation = env.reset()
-      
-  env.close()
+    import gym
+    from wrapper import make_env
+    import numpy as np
+
+    obs_cost = 0.1
+    obs_flag = 1
+    vanilla = 0
+    env = make_env("CartPole-v1", obs_cost, obs_flag, vanilla)
+    observation = env.reset()
+
+    for _ in range(1000):    
+      env.render()
+      action = env.action_space.sample() # your agent here (this takes random actions)
+      observation, reward, done, info = env.step(action)
+      if done:
+        observation = env.reset() 
+    env.close()
 
 # Demonstration of the wrapper class with Stable Baselines:
 
-  import gym
-  from wrapper import make_env
-  from stable_baselines3 import DQN
+    import gym
+    from wrapper import make_env
+    from stable_baselines3 import DQN
+    import pandas as pd
+    import matplotlib.pyplot as plt
 
-  obs_cost = 0.1
-  obs_flag = 1
-  vanilla = 0
-  
-  env = make_env("CartPole-v1", obs_cost, obs_flag, vanilla)
-  model = DQN("MlpPolicy", env, verbose=1)
-  model.learn(total_timesteps=int(2e5), progress_bar=True)
-  model.save("dqn_lunar")
+    obs_cost = 0.1
+    obs_flag = 1
+    vanilla = 0
+
+    env = make_env("CartPole-v1", obs_cost, obs_flag, vanilla)
+    model = DQN("MlpPolicy", env, verbose=1)
+    model.learn(total_timesteps=50000)
+        
+    obs = env.reset()
+    num_measure = 0
+    num_noMeasure = 0
+    for i in range(1000):
+        action, _states = model.predict(obs, deterministic=True)
+        obs, rewards, done, info = env.step(action)
+        if env.is_measure_action(action):
+          num_measure += 1
+        else:
+          num_noMeasure += 1
+        _ = env.render("human")
+        if done:
+          obs = env.reset()
+
+    df = pd.DataFrame({'Total steps':[1000], 'Total Measurements': [num_measure], 'Total No Measurement': [num_noMeasure]})
+    df.plot.bar(title='CartPole Policy Rollout')
