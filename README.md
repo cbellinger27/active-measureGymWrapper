@@ -13,7 +13,7 @@ This repository includes the code associated with the paper 'Balancing Informati
 
 # Overview
 
-The provided gym wrapper environment converts standard OpenAI Gym environments into environments where at each time step the agent select a control action (such as move left, increase torque, etc.) and decides whether or not to measure the next state of the environment. To achieve this behaviour, the new action space is the cross product of the orininal discrete action space and the choice to measure or not measure (1,0). Whenever a measurement is made, the intrinsic measurement cost is subtracted from the extrinsic control reward and returned to the agent. 
+The provided gym wrapper environment converts standard OpenAI Gym environments into environments where at each time step the agent select a control action (such as move left, increase torque, etc.) and decides whether or not to measure the next state of the environment. To achieve this behaviour, the new action space is the cross product of the orininal action space and the choice to measure or not measure (1,0). Whenever a measurement is made, the intrinsic measurement cost is subtracted from the extrinsic control reward and returned to the agent. 
 
 # Demonstration of the wrapper class applied to the cartpole gym environment:
 
@@ -65,6 +65,6 @@ The provided gym wrapper environment converts standard OpenAI Gym environments i
         if done:
           obs = env.reset()
     env.close()
-    
+
     df = pd.DataFrame({'Total steps':[1000], 'Total Measurements': [num_measure], 'Total No Measurement': [num_noMeasure]})
     df.plot.bar(title='CartPole Policy Rollout')
